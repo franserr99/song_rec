@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from scipy.spatial.distance import cdist
+from langdetect import detect
 
 
 def main():
@@ -16,11 +17,17 @@ def main():
         their_pool=input("provide the path like you did before for the pool of songs")
         rec_pool=pd.read_csv(their_pool, index_col=False)
     else: 
-        rec_pool=pd.read_csv("csv_files/rec_pool.csv", index_col=False)
+        rec_pool=pd.read_csv("csv_files/rec_pool_cleaned.csv", index_col=False)
+    #rec_pool['lang']=rec_pool['track_name'].apply(detect_lang)
+    #rec_pool = rec_pool[rec_pool['lang'] == 'en']
+    #print(rec_pool)
+    
     rec_songs=get_rec_songs(rec_pool=rec_pool, user_songs=user_songs, num_of_recs=12)
+    
+    rec_songs.to_csv("loop_it_rec_english_only.csv", index=False)
     print(rec_songs.describe())
 
-    rec_songs.to_csv("testFrancisco.csv", index=False)
+    
 
 def get_mean_vector(df:pd.DataFrame):
     #i am leaving key and mode out of this will return and explain why 
@@ -59,6 +66,13 @@ def get_rec_songs(rec_pool:pd.DataFrame, user_songs:pd.DataFrame, num_of_recs:in
     relevant_df=rec_songs[relevant_col]
 
     return relevant_df
+
+
+def detect_lang(text):
+    try:
+        return detect(text)
+    except:
+        return 'unknown'
 #def get
 if __name__=="__main__":
     main()
