@@ -26,27 +26,10 @@ def main():
     else: 
         rec_pool=pd.read_csv("csv_files/rec_pool.csv", index_col=False)
 
-    #the csv files have three columns that identify the songs
-    #uri, id, and another uri column put in to double check we maintained order 
-    #mean_vector, num_df=get_mean_vector(user_songs)
-
-    #print(mean_vector)
-
-
     rec_songs=get_rec_songs(rec_pool=rec_pool, user_songs=user_songs, num_of_recs=12)
     print(rec_songs.describe())
 
-    rec_songs.to_csv("test1.csv", index=False)
-
-
-
-
-
-
-
-    
-
-    #print(user_songs)
+    rec_songs.to_csv("test3.csv", index=False)
 
 def get_mean_vector(df:pd.DataFrame):
     #i am leaving key and mode out of this will return and explain why 
@@ -63,10 +46,14 @@ def get_mean_vector(df:pd.DataFrame):
 def get_rec_songs(rec_pool:pd.DataFrame, user_songs:pd.DataFrame, num_of_recs:int):
     #returns the mean vector and the df stipped down to numerical features only 
     mean_vector, num_df=get_mean_vector(user_songs)
+    rec_pool.drop_duplicates(subset=["track_name"], inplace=True, keep="first")
 
     numerical_features=["danceability","energy","loudness","speechiness","acousticness",
                         "instrumentalness","liveness","valence","tempo"]
     rec_pool_num=rec_pool[numerical_features]
+
+
+
 
     
     scaler= StandardScaler() 
@@ -87,7 +74,9 @@ def get_rec_songs(rec_pool:pd.DataFrame, user_songs:pd.DataFrame, num_of_recs:in
 
 
     relevant_col = ['track_name', 'artists']
-    return rec_songs[relevant_col]
+    relevant_df=rec_songs[relevant_col]
+
+    return relevant_df
 
     # one thing i need to do is alter the rec_pool 
     #rec_songs=rec_song_df[]
